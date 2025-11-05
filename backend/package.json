@@ -5,6 +5,7 @@
   "main": "src/server.js",
   "type": "module",
   "scripts": {
+    "postinstall": "node -e \"try { require('puppeteer').executablePath() } catch(e) { console.log('Installing Chrome...'); }\" && npx puppeteer browsers install chrome || echo 'Chrome already installed'",
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "test": "jest",

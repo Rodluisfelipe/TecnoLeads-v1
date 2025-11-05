@@ -20,7 +20,8 @@ class ScraperService {
   async initBrowser() {
     if (!this.browser) {
       console.log('🌐 Iniciando navegador headless...');
-      this.browser = await puppeteer.launch({
+      
+      const launchOptions = {
         headless: true,
         args: [
           '--no-sandbox',
@@ -29,7 +30,14 @@ class ScraperService {
           '--disable-gpu',
           '--window-size=1920,1080'
         ]
-      });
+      };
+
+      // En producción (Render), usar Chrome instalado por Puppeteer
+      if (process.env.NODE_ENV === 'production') {
+        launchOptions.executablePath = '/opt/render/.cache/puppeteer/chrome/linux-142.0.7444.59/chrome-linux64/chrome';
+      }
+
+      this.browser = await puppeteer.launch(launchOptions);
     }
     return this.browser;
   }
