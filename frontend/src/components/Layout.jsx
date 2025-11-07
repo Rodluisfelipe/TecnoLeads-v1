@@ -4,18 +4,21 @@ import Sidebar from './Sidebar';
 import { useState } from 'react';
 
 const Layout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Cerrado por defecto
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-      <Navbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      <Navbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} sidebarOpen={sidebarOpen} />
       
       <div className="flex flex-1">
-        <Sidebar isOpen={sidebarOpen} />
+        {/* Sidebar oculto en móviles, visible en desktop */}
+        <div className="hidden lg:block">
+          <Sidebar isOpen={sidebarOpen} />
+        </div>
         
         <main
-          className={`flex-1 p-6 transition-all duration-300 ${
-            sidebarOpen ? 'ml-64' : 'ml-0'
+          className={`flex-1 p-3 sm:p-4 md:p-6 transition-all duration-300 ${
+            sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'
           }`}
         >
           <div className="max-w-7xl mx-auto">
@@ -26,9 +29,9 @@ const Layout = () => {
 
       {/* Footer */}
       <footer className={`bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 transition-all duration-300 ${
-        sidebarOpen ? 'ml-64' : 'ml-0'
+        sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'
       }`}>
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-3 sm:py-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             {/* Información del desarrollador */}
             <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">

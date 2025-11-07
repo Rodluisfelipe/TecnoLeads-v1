@@ -8,6 +8,8 @@ import {
   TrendingUp,
   FileText,
   Settings,
+  History,
+  User,
 } from 'lucide-react';
 import importService from '../services/importService';
 import odooService from '../services/odooService';
@@ -82,38 +84,113 @@ const Dashboard = () => {
     },
   ];
 
+  // Botones principales de navegación
+  const mainActions = [
+    {
+      title: 'Importar',
+      description: 'Subir contratos desde CSV',
+      icon: Upload,
+      color: 'bg-blue-500 hover:bg-blue-600',
+      route: '/import',
+      disabled: !hasOdooConfig,
+    },
+    {
+      title: 'Configuración',
+      description: 'Conectar con Odoo',
+      icon: Settings,
+      color: 'bg-purple-500 hover:bg-purple-600',
+      route: '/odoo-config',
+      disabled: false,
+    },
+    {
+      title: 'Historial',
+      description: 'Ver importaciones previas',
+      icon: History,
+      color: 'bg-green-500 hover:bg-green-600',
+      route: '/history',
+      disabled: false,
+    },
+    {
+      title: 'Perfil',
+      description: 'Mi cuenta y ajustes',
+      icon: User,
+      color: 'bg-orange-500 hover:bg-orange-600',
+      route: '/profile',
+      disabled: false,
+    },
+  ];
+
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 sm:space-y-8 animate-fade-in p-2 sm:p-4">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Resumen de tus importaciones y estadísticas
+      <div className="text-center">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">TecnoLeads</h1>
+        <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+          Sistema de gestión de contratos SECOP II
         </p>
       </div>
 
       {/* Alerta de configuración */}
       {!hasOdooConfig && (
-        <div className="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-4 rounded-lg">
-          <div className="flex items-center">
-            <Settings className="w-5 h-5 text-yellow-600 mr-3" />
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-3 sm:p-4 rounded-lg">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <Settings className="w-5 h-5 text-yellow-600 flex-shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
                 Configuración de Odoo requerida
               </p>
-              <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
+              <p className="text-xs sm:text-sm text-yellow-700 dark:text-yellow-300 mt-1">
                 Debes configurar tus credenciales de Odoo antes de importar datos.
               </p>
             </div>
             <button
               onClick={() => navigate('/odoo-config')}
-              className="btn-primary text-sm"
+              className="btn-primary text-sm w-full sm:w-auto min-h-[44px] sm:min-h-0"
             >
               Configurar Ahora
             </button>
           </div>
         </div>
       )}
+
+      {/* BOTONES PRINCIPALES - 4 CUADRADOS GRANDES */}
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 max-w-4xl mx-auto">
+        {mainActions.map((action, index) => (
+          <button
+            key={index}
+            onClick={() => !action.disabled && navigate(action.route)}
+            disabled={action.disabled}
+            className={`
+              relative aspect-square rounded-2xl text-white shadow-lg 
+              transition-all duration-300 transform hover:scale-105 active:scale-95
+              disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100
+              flex flex-col items-center justify-center p-4 sm:p-6 md:p-8
+              ${action.color}
+              ${action.disabled ? 'saturate-50' : ''}
+            `}
+          >
+            {/* Icono */}
+            <action.icon className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 mb-2 sm:mb-3 md:mb-4" />
+            
+            {/* Título */}
+            <h3 className="text-base sm:text-lg md:text-xl font-bold mb-1 text-center">
+              {action.title}
+            </h3>
+            
+            {/* Descripción */}
+            <p className="text-xs sm:text-sm opacity-90 text-center hidden sm:block">
+              {action.description}
+            </p>
+
+            {/* Badge si está deshabilitado */}
+            {action.disabled && (
+              <div className="absolute top-2 right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">
+                Bloqueado
+              </div>
+            )}
+          </button>
+        ))}
+      </div>
 
       {/* Tarjetas de estadísticas */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
