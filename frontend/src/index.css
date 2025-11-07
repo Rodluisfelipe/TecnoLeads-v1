@@ -12,6 +12,11 @@
 }
 
 @layer components {
+  /* Padding consistente para toda la app */
+  .app-padding {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
   .btn-primary {
     @apply px-4 py-2.5 sm:py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 
            transition-colors duration-200 font-medium disabled:opacity-50 
@@ -37,7 +42,7 @@
   }
 
   .card {
-    @apply bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border 
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-5 lg:p-6 border 
            border-gray-200 dark:border-gray-700;
   }
 

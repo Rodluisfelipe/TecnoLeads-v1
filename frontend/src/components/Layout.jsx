@@ -17,11 +17,11 @@ const Layout = () => {
         </div>
         
         <main
-          className={`flex-1 p-3 sm:p-4 md:p-6 transition-all duration-300 ${
+          className={`flex-1 transition-all duration-300 ${
             sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'
           }`}
         >
-          <div className="max-w-7xl mx-auto">
+          <div className="app-padding py-4 sm:py-6">
             <Outlet />
           </div>
         </main>
@@ -31,7 +31,7 @@ const Layout = () => {
       <footer className={`bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 transition-all duration-300 ${
         sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'
       }`}>
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-3 sm:py-4">
+        <div className="app-padding py-3 sm:py-4">
           <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-2 sm:gap-4 text-center sm:text-left">
             {/* Información del desarrollador */}
             <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-3 text-xs sm:text-sm text-gray-600 dark:text-gray-400">

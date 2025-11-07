@@ -22,6 +22,11 @@ function App() {
         <Router>
           <Toaster
             position="top-right"
+            containerStyle={{
+              top: '16px',
+            }}
+            gutter={8}
+            containerClassName="app-padding"
             toastOptions={{
               duration: 4000,
               style: {

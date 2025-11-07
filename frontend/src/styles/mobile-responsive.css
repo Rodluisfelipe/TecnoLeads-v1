@@ -1,212 +1,35 @@
-/* Estilos responsive mejorados para móvil */
+/* ============================================
+   MOBILE RESPONSIVE - Estilos Complementarios
+   - Mejoras específicas para móvil
+   - Trabaja junto con Tailwind
+   ============================================ */
 
-/* Optimización de padding en móviles */
+/* Scroll suave en móviles */
 @media (max-width: 640px) {
-  .page-container {
-    padding: 0.75rem !important;
-  }
-
-  /* Botones más grandes y fáciles de tocar en móvil */
-  .btn-primary,
-  .btn-secondary {
-    min-height: 48px;
-    font-size: 1rem;
-    padding: 0.875rem 1.5rem;
-  }
-
-  /* Dropzone más grande en móvil */
-  .dropzone-mobile {
-    padding: 2rem 1rem !important;
-    min-height: 200px;
-  }
-
-  /* Títulos más pequeños en móvil */
-  h1 {
-    font-size: 1.5rem !important;
-  }
-
-  h2 {
-    font-size: 1.25rem !important;
-  }
-
-  h3 {
-    font-size: 1.125rem !important;
-  }
-
-  /* Cards con menos padding */
-  .card {
-    padding: 1rem !important;
-  }
-
-  /* Tabla responsive - scroll horizontal */
-  .table-wrapper {
-    overflow-x: auto;
+  .overflow-x-auto {
     -webkit-overflow-scrolling: touch;
-    margin: 0 -1rem;
-    padding: 0 1rem;
+    scroll-behavior: smooth;
   }
 
-  /* Ajustar tabla en móvil */
-  table {
-    font-size: 0.75rem !important;
-  }
-
-  table th,
-  table td {
-    padding: 0.5rem !important;
-    white-space: nowrap;
-  }
-
-  /* Stats cards en columna en móvil */
-  .stats-grid {
-    grid-template-columns: 1fr !important;
-    gap: 0.75rem !important;
-  }
-
-  .stats-grid .card {
-    text-align: center;
-  }
-
-  /* Steps indicator más compacto */
-  .steps-wrapper {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 0.5rem;
-  }
-
-  .step-indicator {
-    min-width: fit-content;
-    padding: 0.5rem;
-  }
-
-  .step-circle {
-    width: 2rem !important;
-    height: 2rem !important;
-    font-size: 0.875rem !important;
-  }
-
-  .step-line {
-    width: 2rem !important;
-    margin: 0 0.5rem !important;
-  }
-
-  .step-label {
-    font-size: 0.75rem !important;
-  }
-
-  /* Modal responsive */
-  .modal-content {
-    width: 95vw !important;
-    max-width: 95vw !important;
-    margin: 1rem !important;
-    max-height: 90vh !important;
-    overflow-y: auto;
-  }
-
-  /* Botón de ojo más grande */
-  .eye-button {
-    min-width: 40px;
-    min-height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  /* Inputs más grandes */
-  input[type="file"] {
-    min-height: 48px;
-  }
-
-  /* Progress steps en columna en móvil muy pequeño */
-  @media (max-width: 380px) {
-    .steps-wrapper {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .step-line {
-      display: none;
-    }
+  /* Touch feedback visual */
+  button:active,
+  a:active {
+    opacity: 0.85;
   }
 }
 
-/* Tablet */
-@media (min-width: 641px) and (max-width: 1024px) {
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
-  .page-container {
-    padding: 1.5rem;
-  }
-}
-
-/* Mejoras táctiles generales */
+/* Mejoras táctiles para touch devices */
 @media (hover: none) and (pointer: coarse) {
-  /* Botones y elementos interactivos */
-  button,
-  a,
-  [role="button"] {
-    min-height: 44px;
-    min-width: 44px;
-  }
-
-  /* Área de tap más grande */
-  .clickable {
-    padding: 0.5rem;
-  }
-
-  /* Scroll suave en móvil */
   * {
     -webkit-overflow-scrolling: touch;
   }
 }
 
-/* Dark mode móvil - mejor contraste */
-@media (max-width: 640px) {
-  @media (prefers-color-scheme: dark) {
-    .card {
-      background: rgba(31, 41, 55, 0.5);
-      backdrop-filter: blur(10px);
-    }
-
-    table {
-      background: rgba(17, 24, 39, 0.8);
-    }
-  }
-}
-
-/* Orientación horizontal en móvil */
-@media (max-width: 900px) and (orientation: landscape) {
-  .modal-content {
-    max-height: 85vh !important;
-  }
-
-  .page-container {
-    padding: 0.5rem !important;
-  }
-}
-
-/* Fix para iOS Safari */
+/* Fix para iOS Safari - Safe areas (notch iPhone) */
 @supports (-webkit-touch-callout: none) {
-  input[type="file"] {
-    -webkit-appearance: none;
-    appearance: none;
-  }
-
-  /* Fix para notch en iPhone X+ */
-  .page-container {
-    padding-left: max(1rem, env(safe-area-inset-left));
-    padding-right: max(1rem, env(safe-area-inset-right));
-    padding-bottom: max(1rem, env(safe-area-inset-bottom));
-  }
-}
-
-/* Animaciones reducidas en móvil para mejor performance */
-@media (prefers-reduced-motion: reduce), (max-width: 640px) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
