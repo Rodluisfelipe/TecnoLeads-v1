@@ -1,9 +1,9 @@
+@import './styles/mobile-responsive.css';
+
+/* Tailwind directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Estilos responsive para móvil */
-@import './styles/mobile-responsive.css';
 
 @layer base {
   body {
