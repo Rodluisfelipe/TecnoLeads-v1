@@ -156,26 +156,27 @@ const Import = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 animate-fade-in">
+    <div className="max-w-5xl mx-auto space-y-4 sm:space-y-6 animate-fade-in p-2 sm:p-4 md:p-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold mb-2">Importar Datos</h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">Importar Datos</h1>
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
           Carga tu archivo CSV/Excel de SECOP II para importar a Odoo
         </p>
       </div>
 
       {/* Steps indicator */}
-      <div className="flex items-center justify-center space-x-4">
+      <div className="overflow-x-auto pb-2">
+        <div className="flex items-center justify-center space-x-2 sm:space-x-4 min-w-max px-2">
         {[
-          { num: 1, label: 'Cargar Archivo' },
+          { num: 1, label: 'Cargar' },
           { num: 2, label: 'Vista Previa' },
           { num: 3, label: 'Importando' },
           { num: 4, label: 'Resultados' },
         ].map((s, index) => (
           <div key={s.num} className="flex items-center">
             <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
+              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-sm sm:text-base ${
                 step >= s.num
                   ? 'bg-primary-600 text-white'
                   : 'bg-gray-200 dark:bg-gray-700 text-gray-500'
@@ -184,17 +185,18 @@ const Import = () => {
               {s.num}
             </div>
             <span
-              className={`ml-2 text-sm font-medium ${
+              className={`ml-1 sm:ml-2 text-xs sm:text-sm font-medium whitespace-nowrap ${
                 step >= s.num ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'
               }`}
             >
               {s.label}
             </span>
             {index < 3 && (
-              <div className={`w-12 h-1 mx-4 ${step > s.num ? 'bg-primary-600' : 'bg-gray-200 dark:bg-gray-700'}`} />
+              <div className={`w-6 sm:w-12 h-1 mx-2 sm:mx-4 ${step > s.num ? 'bg-primary-600' : 'bg-gray-200 dark:bg-gray-700'}`} />
             )}
           </div>
         ))}
+        </div>
       </div>
 
       {/* Step 1: Upload */}
@@ -202,7 +204,7 @@ const Import = () => {
         <div className="card">
           <div
             {...getRootProps()}
-            className={`border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors ${
+            className={`border-2 border-dashed rounded-lg p-6 sm:p-8 md:p-12 text-center cursor-pointer transition-colors min-h-[200px] flex items-center justify-center ${
               isDragActive
                 ? 'border-primary-600 bg-primary-50 dark:bg-primary-900/20'
                 : 'border-gray-300 dark:border-gray-600 hover:border-primary-400'
@@ -213,18 +215,18 @@ const Import = () => {
             {uploading ? (
               <LoadingSpinner size="lg" />
             ) : (
-              <>
-                <Upload className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+              <div>
+                <Upload className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 text-gray-400" />
                 {isDragActive ? (
-                  <p className="text-lg font-medium text-primary-600">
+                  <p className="text-base sm:text-lg font-medium text-primary-600">
                     Suelta el archivo aquí...
                   </p>
                 ) : (
                   <>
-                    <p className="text-lg font-medium mb-2">
+                    <p className="text-base sm:text-lg font-medium mb-2">
                       Arrastra y suelta tu archivo aquí
                     </p>
-                    <p className="text-sm text-gray-500 mb-4">
+                    <p className="text-sm text-gray-500 mb-3 sm:mb-4">
                       o haz clic para seleccionar
                     </p>
                     <p className="text-xs text-gray-400">
@@ -232,7 +234,7 @@ const Import = () => {
                     </p>
                   </>
                 )}
-              </>
+              </div>
             )}
           </div>
         </div>
@@ -240,14 +242,14 @@ const Import = () => {
 
       {/* Step 2: Preview */}
       {step === 2 && fileData && (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* File info */}
           <div className="card">
-            <div className="flex items-center space-x-4">
-              <FileSpreadsheet className="w-12 h-12 text-primary-600" />
-              <div className="flex-1">
-                <h3 className="font-bold text-lg">{fileData.fileName}</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+              <FileSpreadsheet className="w-10 h-10 sm:w-12 sm:h-12 text-primary-600 mx-auto sm:mx-0" />
+              <div className="flex-1 text-center sm:text-left">
+                <h3 className="font-bold text-base sm:text-lg break-all">{fileData.fileName}</h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   {fileData.rowCount} filas • {(fileData.fileSize / 1024).toFixed(2)} KB
                 </p>
               </div>
@@ -255,20 +257,20 @@ const Import = () => {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="card bg-blue-50 dark:bg-blue-900/20">
-              <p className="text-sm text-gray-600 dark:text-gray-400">Total Registros</p>
-              <p className="text-3xl font-bold text-blue-600">{fileData.stats.totalRecords}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            <div className="card bg-blue-50 dark:bg-blue-900/20 text-center">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Total Registros</p>
+              <p className="text-2xl sm:text-3xl font-bold text-blue-600">{fileData.stats.totalRecords}</p>
             </div>
-            <div className="card bg-green-50 dark:bg-green-900/20">
-              <p className="text-sm text-gray-600 dark:text-gray-400">Valor Total</p>
-              <p className="text-3xl font-bold text-green-600">
+            <div className="card bg-green-50 dark:bg-green-900/20 text-center">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Valor Total</p>
+              <p className="text-2xl sm:text-3xl font-bold text-green-600">
                 ${fileData.stats.totalValue.toLocaleString()}
               </p>
             </div>
-            <div className="card bg-purple-50 dark:bg-purple-900/20">
-              <p className="text-sm text-gray-600 dark:text-gray-400">Con Email</p>
-              <p className="text-3xl font-bold text-purple-600">
+            <div className="card bg-purple-50 dark:bg-purple-900/20 text-center">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Con Email</p>
+              <p className="text-2xl sm:text-3xl font-bold text-purple-600">
                 {fileData.stats.recordsWithEmail}
               </p>
             </div>
@@ -276,16 +278,17 @@ const Import = () => {
 
           {/* Preview table - TODOS LOS CAMPOS */}
           <div className="card">
-            <h3 className="font-bold text-lg mb-4">
+            <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4">
               📋 Vista Previa Completa (10 primeras filas - {fileData.headers.length} columnas)
             </h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-100 dark:bg-gray-700">
+            <div className="overflow-x-auto -mx-2 sm:mx-0">
+              <div className="inline-block min-w-full align-middle px-2 sm:px-0">
+              <table className="w-full text-xs sm:text-sm">
+                <thead className="bg-gray-100 dark:bg-gray-700 sticky top-0">
                   <tr>
-                    <th className="px-3 py-2 text-left font-medium sticky left-0 bg-gray-100 dark:bg-gray-700">#</th>
+                    <th className="px-2 sm:px-3 py-2 text-left font-medium sticky left-0 bg-gray-100 dark:bg-gray-700 z-10">#</th>
                     {fileData.headers.map((header, index) => (
-                      <th key={index} className="px-3 py-2 text-left font-medium whitespace-nowrap">
+                      <th key={index} className="px-2 sm:px-3 py-2 text-left font-medium whitespace-nowrap">
                         {header}
                       </th>
                     ))}
@@ -294,9 +297,9 @@ const Import = () => {
                 <tbody>
                   {fileData.preview.map((row, rowIndex) => (
                     <tr key={rowIndex} className="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
-                      <td className="px-3 py-2 font-medium sticky left-0 bg-white dark:bg-gray-900">{rowIndex + 1}</td>
+                      <td className="px-2 sm:px-3 py-2 font-medium sticky left-0 bg-white dark:bg-gray-900 z-10">{rowIndex + 1}</td>
                       {fileData.headers.map((header, colIndex) => (
-                        <td key={colIndex} className="px-3 py-2 max-w-xs truncate" title={row[header]}>
+                        <td key={colIndex} className="px-2 sm:px-3 py-2 max-w-xs truncate" title={row[header]}>
                           {row[header] || '-'}
                         </td>
                       ))}
@@ -304,15 +307,16 @@ const Import = () => {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
             <p className="text-xs text-gray-500 mt-3">
-              💡 Desplázate horizontalmente para ver todos los campos. Pasa el mouse sobre las celdas para ver el contenido completo.
+              💡 Desliza horizontalmente para ver todos los campos. Toca las celdas para ver el contenido completo.
             </p>
           </div>
 
           {/* Mapeo de Campos */}
           <div className="card">
-            <h3 className="font-bold text-lg mb-4">🔄 Cómo se transformarán los campos en Odoo</h3>
+            <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4">🔄 Cómo se transformarán los campos en Odoo</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <h4 className="font-semibold text-sm text-primary-600">📊 Campos CSV</h4>
@@ -413,33 +417,32 @@ const Import = () => {
                   </div>
 
                   {/* Tabla de resultados */}
-                  <div className="overflow-x-auto max-h-96 overflow-y-auto">
+                  <div className="overflow-x-auto max-h-96 overflow-y-auto -mx-2 sm:mx-0">
+                    <div className="inline-block min-w-full align-middle px-2 sm:px-0">
                     <table className="w-full text-xs">
                       <thead className="bg-gray-200 dark:bg-gray-700 sticky top-0">
                         <tr>
-                          <th className="px-3 py-2 text-left">#</th>
-                          <th className="px-3 py-2 text-left">Enlace</th>
-                          <th className="px-3 py-2 text-left">Fecha Extraída</th>
-                          <th className="px-3 py-2 text-left">Fecha Normalizada</th>
-                          <th className="px-3 py-2 text-left">Estado</th>
-                          <th className="px-3 py-2 text-center">Detalles</th>
+                          <th className="px-2 sm:px-3 py-2 text-left sticky left-0 bg-gray-200 dark:bg-gray-700 z-10">#</th>
+                          <th className="px-2 sm:px-3 py-2 text-left">Enlace</th>
+                          <th className="px-2 sm:px-3 py-2 text-left whitespace-nowrap">Fecha</th>
+                          <th className="px-2 sm:px-3 py-2 text-left">Estado</th>
+                          <th className="px-2 sm:px-3 py-2 text-center">Ver</th>
                         </tr>
                       </thead>
                       <tbody>
                         {deadlineResults.results.map((result, idx) => (
                           <tr key={idx} className="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
-                            <td className="px-3 py-2">{idx + 1}</td>
-                            <td className="px-3 py-2 max-w-xs truncate">
-                              <a href={result.enlace} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                            <td className="px-2 sm:px-3 py-2 sticky left-0 bg-white dark:bg-gray-900 z-10">{idx + 1}</td>
+                            <td className="px-2 sm:px-3 py-2 max-w-[150px] sm:max-w-xs truncate">
+                              <a href={result.enlace} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-xs">
                                 {result.enlace}
                               </a>
                             </td>
-                            <td className="px-3 py-2 text-gray-600">{result.raw || '-'}</td>
-                            <td className="px-3 py-2 font-mono text-xs font-semibold">
+                            <td className="px-2 sm:px-3 py-2 font-mono text-xs font-semibold whitespace-nowrap">
                               {result.normalized || '-'}
                             </td>
-                            <td className="px-3 py-2">
-                              <span className={`px-2 py-1 rounded text-xs font-medium ${
+                            <td className="px-2 sm:px-3 py-2">
+                              <span className={`px-2 py-1 rounded text-xs font-medium whitespace-nowrap ${
                                 result.status === 'ok' ? 'bg-green-100 text-green-800' :
                                 result.status === 'not_found' ? 'bg-yellow-100 text-yellow-800' :
                                 'bg-red-100 text-red-800'
@@ -447,17 +450,17 @@ const Import = () => {
                                 {result.status}
                               </span>
                             </td>
-                            <td className="px-3 py-2 text-center">
+                            <td className="px-2 sm:px-3 py-2 text-center">
                               {result.datosCompletos && (
                                 <button
                                   onClick={() => {
                                     setSelectedContrato(result.datosCompletos);
                                     setShowDetalleModal(true);
                                   }}
-                                  className="inline-flex items-center justify-center p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md transition-colors"
+                                  className="inline-flex items-center justify-center min-w-[40px] min-h-[40px] p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md transition-colors"
                                   title="Ver detalles completos del contrato"
                                 >
-                                  <Eye className="w-4 h-4" />
+                                  <Eye className="w-5 h-5 sm:w-4 sm:h-4" />
                                 </button>
                               )}
                             </td>
@@ -465,6 +468,7 @@ const Import = () => {
                         ))}
                       </tbody>
                     </table>
+                    </div>
                   </div>
 
                   <p className="text-xs text-gray-500 mt-3">
@@ -476,11 +480,11 @@ const Import = () => {
           )}
 
           {/* Actions */}
-          <div className="flex space-x-4">
-            <button onClick={resetImport} className="btn-secondary flex-1">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <button onClick={resetImport} className="btn-secondary flex-1 min-h-[48px]">
               Cancelar
             </button>
-            <button onClick={handleImport} className="btn-primary flex-1">
+            <button onClick={handleImport} className="btn-primary flex-1 min-h-[48px]">
               Iniciar Importación
             </button>
           </div>

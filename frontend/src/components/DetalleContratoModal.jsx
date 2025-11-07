@@ -141,11 +141,11 @@ export default function DetalleContratoModal({ isOpen, onClose, datos }) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-5xl sm:p-6">
-                <div className="absolute right-0 top-0 pr-4 pt-4">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-3 sm:px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-5xl sm:p-6 max-h-[90vh] sm:max-h-[85vh]">
+                <div className="absolute right-0 top-0 pr-3 sm:pr-4 pt-3 sm:pt-4">
                   <button
                     type="button"
-                    className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
                     onClick={onClose}
                   >
                     <span className="sr-only">Cerrar</span>
@@ -155,14 +155,14 @@ export default function DetalleContratoModal({ isOpen, onClose, datos }) {
 
                 <div className="sm:flex sm:items-start">
                   <div className="mt-3 w-full text-center sm:mt-0 sm:text-left">
-                    <Dialog.Title as="h2" className="text-2xl font-bold leading-6 text-gray-900 mb-6 pr-8">
+                    <Dialog.Title as="h2" className="text-xl sm:text-2xl font-bold leading-6 text-gray-900 mb-4 sm:mb-6 pr-10 sm:pr-8">
                       📋 Detalles del Contrato
                     </Dialog.Title>
 
-                    <div className="mt-6 max-h-[70vh] overflow-y-auto pr-4">
+                    <div className="mt-4 sm:mt-6 max-h-[60vh] sm:max-h-[70vh] overflow-y-auto pr-2 sm:pr-4">
                       {/* Información destacada */}
-                      <div className="bg-blue-50 rounded-lg p-4 mb-6 border border-blue-200">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-blue-50 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6 border border-blue-200">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                           <div>
                             <p className="text-xs font-medium text-blue-600 mb-1">CÓDIGO PROCESO</p>
                             <p className="text-lg font-bold text-blue-900">
@@ -232,10 +232,10 @@ export default function DetalleContratoModal({ isOpen, onClose, datos }) {
                   </div>
                 </div>
 
-                <div className="mt-6 sm:mt-6 sm:flex sm:flex-row-reverse">
+                <div className="mt-4 sm:mt-6 flex flex-col-reverse sm:flex-row-reverse gap-3">
                   <button
                     type="button"
-                    className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
+                    className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2.5 sm:py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto min-h-[48px] sm:min-h-0"
                     onClick={onClose}
                   >
                     Cerrar
@@ -245,7 +245,7 @@ export default function DetalleContratoModal({ isOpen, onClose, datos }) {
                       href={datos.Link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                      className="inline-flex w-full justify-center rounded-md bg-white px-3 py-2.5 sm:py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:w-auto min-h-[48px] sm:min-h-0"
                     >
                       Ver en SECOP II
                     </a>
