@@ -480,14 +480,6 @@ class OdooService {
           }
         }
 
-        // Tag 3: TECNOPHONE (Empresa) - Solo si existe
-        try {
-          const tecnoTagId = await this.findOrCreateTag('TECNOPHONE');
-          if (tecnoTagId) tagIds.push(tecnoTagId);
-        } catch (tagError) {
-          console.warn(`⚠️ Error buscando/creando tag TECNOPHONE: ${tagError.message}`);
-        }
-
         // Asignar tags al lead
         if (tagIds.length > 0) {
           // Formato Odoo para asignar tags: [[6, 0, [id1, id2, id3]]]

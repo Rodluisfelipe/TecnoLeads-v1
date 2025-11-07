@@ -2,6 +2,7 @@ import fs from 'fs';
 import Papa from 'papaparse';
 import ExcelJS from 'exceljs';
 import path from 'path';
+import dataValidatorService from './dataValidator.service.js';
 
 class FileParserService {
   // Parsear archivo CSV
@@ -404,35 +405,89 @@ class FileParserService {
         throw new Error('El archivo Excel está vacío');
       }
 
-      const headers = [];
-      const data = [];
+      let headers = [];
+      let data = [];
 
-      // Obtener headers de la primera fila
+      // 🔍 PASO 1: Obtener headers de la primera fila
       const headerRow = worksheet.getRow(1);
       headerRow.eachCell((cell) => {
         headers.push(cell.value ? cell.value.toString() : '');
       });
 
-      // Obtener datos
-      worksheet.eachRow((row, rowNumber) => {
-        if (rowNumber === 1) return; // Skip header row
-
-        const rowData = {};
-        row.eachCell((cell, colNumber) => {
-          const header = headers[colNumber - 1];
-          rowData[header] = cell.value;
+      // 🧩 PASO 2: Detectar si todas las columnas están colapsadas en una sola
+      const isCollapsed = headers.length === 1 && headers[0].includes(',');
+      
+      if (isCollapsed) {
+        console.log('⚠️  Excel con estructura colapsada detectado (CSV dentro de Excel)');
+        console.log('🔧 Aplicando corrección automática...');
+        
+        // Extraer todas las filas como texto CSV
+        const csvLines = [];
+        worksheet.eachRow((row) => {
+          const firstCell = row.getCell(1).value;
+          if (firstCell) {
+            csvLines.push(firstCell.toString());
+          }
         });
+        
+        // Parsear como CSV usando PapaParse
+        const csvText = csvLines.join('\n');
+        const parsed = Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          dynamicTyping: false,
+          delimiter: ',',
+          quoteChar: '"',
+          escapeChar: '"',
+          trimHeaders: true,
+          trimFields: true,
+        });
+        
+        headers = parsed.meta.fields || [];
+        data = parsed.data || [];
+        
+        console.log(`✅ Estructura corregida: ${headers.length} columnas, ${data.length} registros`);
+        console.log(`📋 Columnas detectadas: ${headers.join(', ')}`);
+        
+      } else {
+        // 📊 PASO 3: Procesamiento normal (Excel bien estructurado)
+        worksheet.eachRow((row, rowNumber) => {
+          if (rowNumber === 1) return; // Skip header row
 
-        // Solo agregar si tiene al menos un valor
-        if (Object.values(rowData).some(v => v !== null && v !== undefined && v !== '')) {
-          data.push(rowData);
-        }
+          const rowData = {};
+          row.eachCell((cell, colNumber) => {
+            const header = headers[colNumber - 1];
+            if (header) {
+              rowData[header] = cell.value;
+            }
+          });
+
+          // Solo agregar si tiene al menos un valor
+          if (Object.values(rowData).some(v => v !== null && v !== undefined && v !== '')) {
+            data.push(rowData);
+          }
+        });
+        
+        console.log(`✅ Excel parseado: ${headers.length} columnas, ${data.length} registros`);
+        console.log(`📋 Columnas: ${headers.join(', ')}`);
+      }
+
+      // 🧹 PASO 4: Limpiar columnas vacías (Unnamed: X)
+      const cleanHeaders = headers.filter(h => h && !h.startsWith('Unnamed:'));
+      const cleanData = data.map(row => {
+        const cleanRow = {};
+        cleanHeaders.forEach(header => {
+          if (row[header] !== undefined) {
+            cleanRow[header] = row[header];
+          }
+        });
+        return cleanRow;
       });
 
       return {
-        data,
-        headers,
-        rowCount: data.length,
+        data: cleanData,
+        headers: cleanHeaders,
+        rowCount: cleanData.length,
       };
     } catch (error) {
       throw new Error(`Error parseando Excel: ${error.message}`);
@@ -443,13 +498,43 @@ class FileParserService {
   async parseFile(filePath) {
     const ext = path.extname(filePath).toLowerCase();
 
+    let result;
+    
+    // 📄 PASO 1: Parsear según tipo de archivo
     if (ext === '.csv') {
-      return await this.parseCSV(filePath);
+      result = await this.parseCSV(filePath);
     } else if (ext === '.xlsx' || ext === '.xls') {
-      return await this.parseExcel(filePath);
+      result = await this.parseExcel(filePath);
     } else {
       throw new Error('Tipo de archivo no soportado');
     }
+
+    // 🛡️ PASO 2: Validar datos
+    console.log('\n🛡️  Iniciando validación y corrección automática...');
+    const validationReport = await dataValidatorService.validateFile(
+      result.data,
+      result.headers
+    );
+
+    // 🔧 PASO 3: Aplicar correcciones automáticas
+    const corrected = await dataValidatorService.autoCorrect(
+      result.data,
+      result.headers
+    );
+
+    // 📊 PASO 4: Generar reporte
+    const report = dataValidatorService.generateReport(
+      validationReport,
+      corrected.corrections
+    );
+
+    // ✅ PASO 5: Retornar datos corregidos
+    return {
+      data: corrected.data,
+      headers: corrected.headers,
+      rowCount: corrected.data.length,
+      validationReport: report
+    };
   }
 
   // Limpiar archivos temporales

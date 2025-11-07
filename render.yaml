@@ -1,4 +1,5 @@
 # Render Backend Configuration
+# ✅ SIN PUPPETEER - Compatible con Free Tier
 services:
   - type: web
     name: tecnoleads-backend
@@ -6,7 +7,7 @@ services:
     region: oregon
     plan: free
     rootDir: backend
-    buildCommand: npm install && npx puppeteer browsers install chrome
+    buildCommand: npm install
     startCommand: npm start
     envVars:
       - key: NODE_ENV
@@ -19,8 +20,11 @@ services:
         generateValue: true
       - key: ENCRYPTION_KEY
         generateValue: true
-      - key: PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
-        value: false
-      - key: PUPPETEER_CACHE_DIR
-        value: /opt/render/.cache/puppeteer
+      # MongoDB Atlas (agregar tu connection string)
+      - key: MONGODB_URI
+        sync: false  # Configurar manualmente en Render Dashboard
+      # CORS para Vercel
+      - key: FRONTEND_URL
+        value: https://tecnoleads.vercel.app
     healthCheckPath: /api/health
+    autoDeploy: true

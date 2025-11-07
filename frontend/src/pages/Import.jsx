@@ -1,9 +1,10 @@
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, FileSpreadsheet, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
+import { Upload, FileSpreadsheet, AlertCircle, CheckCircle, XCircle, Eye } from 'lucide-react';
 import importService from '../services/importService';
 import odooService from '../services/odooService';
 import LoadingSpinner from '../components/LoadingSpinner';
+import DetalleContratoModal from '../components/DetalleContratoModal';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,6 +19,8 @@ const Import = () => {
   const [hasOdooConfig, setHasOdooConfig] = useState(true);
   const [extractingDeadlines, setExtractingDeadlines] = useState(false);
   const [deadlineResults, setDeadlineResults] = useState(null);
+  const [selectedContrato, setSelectedContrato] = useState(null);
+  const [showDetalleModal, setShowDetalleModal] = useState(false);
 
   // Verificar configuración de Odoo al cargar
   useState(() => {
@@ -114,8 +117,18 @@ const Import = () => {
       const response = await importService.extractDeadlines(fileData.filePath);
       
       if (response.success) {
-        setDeadlineResults(response.data);
-        toast.success(`Fechas extraídas: ${response.data.summary.ok}/${response.data.summary.total} exitosas`);
+        // El backend devuelve {success, message, data: {summary, details, deadlinesByUrl}}
+        const extractionData = response.data || {};
+        setDeadlineResults(extractionData);
+        
+        // Validar que summary exista antes de usarlo
+        if (extractionData.summary) {
+          const total = extractionData.summary.total || 0;
+          const ok = extractionData.summary.ok || 0;
+          toast.success(`Fechas extraídas: ${ok}/${total} exitosas`);
+        } else {
+          toast.success('Extracción completada');
+        }
       }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Error extrayendo fechas');
@@ -375,22 +388,22 @@ const Import = () => {
               </div>
 
               {/* Resultados de extracción */}
-              {deadlineResults && (
+              {deadlineResults && deadlineResults.summary && (
                 <div className="mt-6 space-y-4">
                   {/* Resumen */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded">
                       <p className="text-xs text-gray-600 dark:text-gray-400">Exitosos</p>
-                      <p className="text-2xl font-bold text-green-700">{deadlineResults.summary.ok}</p>
+                      <p className="text-2xl font-bold text-green-700">{deadlineResults.summary.ok || 0}</p>
                     </div>
                     <div className="bg-yellow-100 dark:bg-yellow-900/30 p-3 rounded">
                       <p className="text-xs text-gray-600 dark:text-gray-400">No encontrados</p>
-                      <p className="text-2xl font-bold text-yellow-700">{deadlineResults.summary.not_found}</p>
+                      <p className="text-2xl font-bold text-yellow-700">{deadlineResults.summary.not_found || 0}</p>
                     </div>
                     <div className="bg-red-100 dark:bg-red-900/30 p-3 rounded">
                       <p className="text-xs text-gray-600 dark:text-gray-400">Errores</p>
                       <p className="text-2xl font-bold text-red-700">
-                        {deadlineResults.summary.invalid_url + deadlineResults.summary.parse_error + deadlineResults.summary.timeout + deadlineResults.summary.navigation_error}
+                        {(deadlineResults.summary.invalid_url || 0) + (deadlineResults.summary.parse_error || 0) + (deadlineResults.summary.timeout || 0) + (deadlineResults.summary.navigation_error || 0)}
                       </p>
                     </div>
                     <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded">
@@ -409,6 +422,7 @@ const Import = () => {
                           <th className="px-3 py-2 text-left">Fecha Extraída</th>
                           <th className="px-3 py-2 text-left">Fecha Normalizada</th>
                           <th className="px-3 py-2 text-left">Estado</th>
+                          <th className="px-3 py-2 text-center">Detalles</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -432,6 +446,20 @@ const Import = () => {
                               }`} title={result.meta?.reason}>
                                 {result.status}
                               </span>
+                            </td>
+                            <td className="px-3 py-2 text-center">
+                              {result.datosCompletos && (
+                                <button
+                                  onClick={() => {
+                                    setSelectedContrato(result.datosCompletos);
+                                    setShowDetalleModal(true);
+                                  }}
+                                  className="inline-flex items-center justify-center p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md transition-colors"
+                                  title="Ver detalles completos del contrato"
+                                >
+                                  <Eye className="w-4 h-4" />
+                                </button>
+                              )}
                             </td>
                           </tr>
                         ))}
@@ -538,6 +566,16 @@ const Import = () => {
           </div>
         </div>
       )}
+
+      {/* Modal de detalles del contrato */}
+      <DetalleContratoModal
+        isOpen={showDetalleModal}
+        onClose={() => {
+          setShowDetalleModal(false);
+          setSelectedContrato(null);
+        }}
+        datos={selectedContrato}
+      />
     </div>
   );
 };

@@ -47,26 +47,53 @@ TecnoLeads automatiza la importación de licitaciones gubernamentales desde el p
 
 ## 🚀 Instalación
 
-### Prerrequisitos
-- Node.js 18+ 
-- MongoDB 6+
-- Cuenta Odoo activa
+### 📦 Opción 1: Aplicación de Escritorio (Recomendado)
 
-### Backend
+**Para usuarios finales - Sin instalar Node.js:**
 
+1. Descarga el instalador: `TecnoLeads-Setup-1.0.0.exe`
+2. Doble clic e instala
+3. ¡Listo! Ejecuta desde el menú de inicio
+
+**Para crear el instalador:**
 ```bash
-cd backend
-npm install
-cp .env.example .env
-# Configurar variables en .env
-npm run dev
+build-electron.bat
 ```
 
-### Frontend
+Ver guía completa: [ELECTRON_GUIDE.md](./ELECTRON_GUIDE.md)
 
+### 💻 Opción 2: Desarrollo Web
+
+**Prerrequisitos:**
+- Node.js 18+ 
+- Cuenta MongoDB Atlas o MongoDB local
+- Cuenta Odoo activa
+
+**Instalación rápida:**
 ```bash
-cd frontend
+# Script automático (Windows)
+setup.bat
+
+# O manual:
+cd backend
 npm install
+
+cd ../frontend
+npm install
+```
+
+**Ejecutar:**
+```bash
+# Script automático (Windows)
+start.bat
+
+# O manual:
+# Terminal 1
+cd backend
+npm run dev
+
+# Terminal 2
+cd frontend
 npm run dev
 ```
 
@@ -79,9 +106,7 @@ TecnoLeads-v1/
 │   │   ├── components/      # Componentes React
 │   │   ├── pages/          # Páginas/vistas
 │   │   ├── services/       # API clients
-│   │   ├── hooks/          # Custom hooks
 │   │   ├── context/        # Context providers
-│   │   ├── utils/          # Utilidades
 │   │   └── App.jsx
 │   └── package.json
 ├── backend/                  # API Node.js
@@ -93,6 +118,15 @@ TecnoLeads-v1/
 │   │   ├── services/       # Lógica de negocio
 │   │   └── server.js
 │   └── package.json
+├── electron/                 # 🆕 Aplicación de Escritorio
+│   ├── main.js              # Proceso principal Electron
+│   ├── preload.js           # Bridge seguro
+│   ├── assets/              # Iconos
+│   └── package.json
+├── build-electron.bat        # 🆕 Build de instalador
+├── start-electron-dev.bat    # 🆕 Desarrollo Electron
+├── setup.bat                 # Instalación dependencias
+├── start.bat                 # Inicio desarrollo web
 └── README.md
 ```
 
@@ -102,9 +136,20 @@ TecnoLeads-v1/
 
 ```env
 PORT=5000
-MONGODB_URI=mongodb://localhost:27017/tecnoleads
-JWT_SECRET=your-secret-key-here
-ENCRYPTION_KEY=your-32-char-encryption-key
+
+# MongoDB Atlas (recomendado) o local
+MONGODB_URI=mongodb+srv://usuario:password@cluster.mongodb.net/tecnoleads
+# O local: mongodb://localhost:27017/tecnoleads
+
+# Genera secrets seguros con:
+# node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+JWT_SECRET=your-secret-key-here-min-32-chars
+JWT_REFRESH_SECRET=another-different-secret
+
+# Genera con:
+# node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+ENCRYPTION_KEY=your-64-char-hex-encryption-key
+
 NODE_ENV=development
 ```
 
@@ -116,6 +161,16 @@ VITE_API_URL=http://localhost:5000/api
 
 ## 📖 Uso
 
+### 🖥️ Versión Desktop (Electron)
+1. **Instalar**: Ejecutar `TecnoLeads-Setup-1.0.0.exe`
+2. **Abrir**: Doble clic en el icono de TecnoLeads
+3. La aplicación iniciará automáticamente backend y frontend
+
+### 🌐 Versión Web (Desarrollo)
+1. **Ejecutar**: Doble clic en `start.bat`
+2. **Acceder**: Abrir navegador en `http://localhost:5173`
+
+### Flujo de Trabajo General
 1. **Registro/Login**: Crear cuenta o iniciar sesión
 2. **Configurar Odoo**: Ingresar credenciales de tu instancia Odoo
 3. **Cargar Archivo**: Seleccionar CSV/Excel de SECOP II

@@ -371,13 +371,19 @@ export const extractDeadlines = async (req, res) => {
     // Extraer fechas de todos los enlaces
     const extraction = await scraperService.extractDeadlineDatesFromRows(parsed.data);
 
-    // � Guardar fechas en un mapa por enlace (en memoria del servidor)
+    // 📝 Guardar fechas en un mapa por enlace (en memoria del servidor)
     const deadlineMap = {};
-    extraction.results.forEach(result => {
-      if (result.enlace && result.normalized) {
-        deadlineMap[result.enlace] = result.normalized;
-      }
-    });
+    
+    // Validar que extraction.results exista y sea un array
+    if (extraction && Array.isArray(extraction.results)) {
+      extraction.results.forEach(result => {
+        if (result.enlace && result.normalized) {
+          deadlineMap[result.enlace] = result.normalized;
+        }
+      });
+    } else {
+      console.warn(`⚠️ No se obtuvieron resultados de extracción válidos`);
+    }
 
     // Guardar el mapa en el objeto global para que esté disponible durante la importación
     if (!global.deadlineMaps) {

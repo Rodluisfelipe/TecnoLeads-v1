@@ -3,15 +3,21 @@
   "version": "1.0.0",
   "description": "Sistema de importación SECOP II a Odoo CRM",
   "scripts": {
-    "install:all": "npm run install:backend && npm run install:frontend",
+    "install:all": "npm run install:backend && npm run install:frontend && npm run install:electron",
     "install:backend": "cd backend && npm install",
     "install:frontend": "cd frontend && npm install",
+    "install:electron": "cd electron && npm install",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
+    "dev:electron": "cd electron && npm run dev",
     "build": "cd frontend && npm install && npm run build",
+    "build:electron": "npm run build:frontend && cd electron && npm install && npm run build",
+    "build:frontend": "cd frontend && npm run build",
     "start": "cd backend && npm install && npm start",
-    "setup": "node setup.js"
+    "start:electron": "cd electron && npm start",
+    "setup": "node setup.js",
+    "verify": "node -p \"'✅ Node.js ' + process.version + ' instalado'\""
   },
   "keywords": [
     "odoo",
@@ -19,7 +25,9 @@
     "secop",
     "import",
     "react",
-    "node"
+    "node",
+    "electron",
+    "desktop"
   ],
   "author": "Tecnophone",
   "license": "MIT",

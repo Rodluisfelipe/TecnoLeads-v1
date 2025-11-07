@@ -41,7 +41,7 @@ api.interceptors.response.use(
       if (debugMessage.includes('invalid signature') || errorMessage.includes('Token inválido')) {
         console.warn('⚠️ Token generado con JWT_SECRET diferente. Limpiando sesión...');
         localStorage.clear();
-        window.location.href = '/login';
+        window.location.hash = '#/login';
         return Promise.reject(error);
       }
 
@@ -52,7 +52,7 @@ api.interceptors.response.use(
         if (!refreshToken) {
           console.log('No refresh token found, clearing session...');
           localStorage.clear();
-          window.location.href = '/login';
+          window.location.hash = '#/login';
           return Promise.reject(error);
         }
 
@@ -71,7 +71,7 @@ api.interceptors.response.use(
         // Si falla el refresh, cerrar sesión completamente
         console.log('Token refresh failed, logging out...');
         localStorage.clear();
-        window.location.href = '/login';
+        window.location.hash = '#/login';
         return Promise.reject(refreshError);
       }
     }
