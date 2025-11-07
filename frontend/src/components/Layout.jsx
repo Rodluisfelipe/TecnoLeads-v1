@@ -1,49 +1,42 @@
 import { Outlet } from 'react-router-dom';
+import { useState } from 'react';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
-import { useState } from 'react';
 
 const Layout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false); // Cerrado por defecto
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const handleToggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+  const handleCloseSidebar = () => setIsSidebarOpen(false);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-      <Navbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} sidebarOpen={sidebarOpen} />
+      <Navbar toggleSidebar={handleToggleSidebar} />
       
-      <div className="flex flex-1">
-        {/* Sidebar oculto en móviles, visible en desktop */}
-        <div className="hidden lg:block">
-          <Sidebar isOpen={sidebarOpen} />
-        </div>
-        
-        <main
-          className={`flex-1 transition-all duration-300 ${
-            sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'
-          }`}
-        >
-          <div className="app-padding py-4 sm:py-6">
+      <div className="flex flex-1 pb-20">
+        <Sidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} />
+        <main className="flex-1">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <Outlet />
           </div>
         </main>
       </div>
 
-      {/* Footer */}
-      <footer className={`bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 transition-all duration-300 ${
-        sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'
-      }`}>
-        <div className="app-padding py-3 sm:py-4">
-          <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-2 sm:gap-4 text-center sm:text-left">
+      {/* Footer fijo */}
+      <footer className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 text-center sm:text-left">
             {/* Información del desarrollador */}
-            <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-3 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex flex-col sm:flex-row items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
               <span className="font-medium hidden sm:inline">Desarrollado por</span>
               <a
                 href="https://github.com/Rodluisfelipe"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 sm:gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors font-semibold group"
+                className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors font-semibold group"
               >
                 <svg
-                  className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform flex-shrink-0"
+                  className="w-5 h-5 group-hover:scale-110 transition-transform flex-shrink-0"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                   aria-hidden="true"
@@ -54,22 +47,22 @@ const Layout = () => {
                     clipRule="evenodd"
                   />
                 </svg>
-                <span className="truncate">Felipe Rodríguez</span>
+                <span>Felipe Rodríguez</span>
               </a>
             </div>
 
             {/* Empresa */}
-            <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-3 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex flex-col sm:flex-row items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
               <span className="font-medium hidden sm:inline">para</span>
-              <div className="flex items-center gap-1 sm:gap-2 text-blue-600 dark:text-blue-400 font-semibold group">
+              <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold group">
                 <svg
-                  className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform flex-shrink-0"
+                  className="w-5 h-5 group-hover:scale-110 transition-transform flex-shrink-0"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
                   <path fillRule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
                 </svg>
-                <span className="truncate max-w-[200px] sm:max-w-none">Tecnophone Colombia SAS</span>
+                <span className="truncate">Tecnophone Colombia SAS - TecnoLeads</span>
               </div>
             </div>
           </div>

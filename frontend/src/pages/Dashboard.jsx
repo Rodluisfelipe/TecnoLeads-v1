@@ -121,7 +121,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="space-y-6 sm:space-y-8 animate-fade-in p-2 sm:p-4">
+    <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="text-center">
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">TecnoLeads</h1>
@@ -153,8 +153,8 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* BOTONES PRINCIPALES - 4 CUADRADOS GRANDES */}
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 max-w-4xl mx-auto">
+      {/* BOTONES PRINCIPALES - Solo visibles en mobile/tablet */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6 max-w-4xl mx-auto lg:hidden">
         {mainActions.map((action, index) => (
           <button
             key={index}

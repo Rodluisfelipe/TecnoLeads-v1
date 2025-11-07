@@ -147,7 +147,8 @@ class SecopApiService {
                 valor: contratoData.Valor,
                 estado: contratoData.estado_agrupado,
                 fecha_publicacion: fechaPublicacionCorregida,
-                fecha_vencimiento: fechaVencimientoCorregida
+                fecha_vencimiento: fechaVencimientoCorregida,
+                enlace_secop: contratoData.Link || null  // 🔗 Enlace oficial de SECOP
               },
               cronograma: fechaVencimientoCorregida ? [{
                 evento: 'Presentación de Ofertas',

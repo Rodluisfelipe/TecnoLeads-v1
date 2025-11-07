@@ -373,12 +373,18 @@ export const extractDeadlines = async (req, res) => {
 
     // 📝 Guardar fechas en un mapa por enlace (en memoria del servidor)
     const deadlineMap = {};
+    const secopLinkMap = {};  // 🔗 Mapa de enlaces SECOP oficiales
     
     // Validar que extraction.results exista y sea un array
     if (extraction && Array.isArray(extraction.results)) {
       extraction.results.forEach(result => {
         if (result.enlace && result.normalized) {
           deadlineMap[result.enlace] = result.normalized;
+        }
+        // Guardar enlace SECOP si existe
+        if (result.enlace && result.meta && result.meta.enlace_secop) {
+          secopLinkMap[result.enlace] = result.meta.enlace_secop;
+          console.log(`🔗 Enlace SECOP guardado: ${result.enlace} → ${result.meta.enlace_secop}`);
         }
       });
     } else {
@@ -389,10 +395,15 @@ export const extractDeadlines = async (req, res) => {
     if (!global.deadlineMaps) {
       global.deadlineMaps = {};
     }
+    if (!global.secopLinkMaps) {
+      global.secopLinkMaps = {};
+    }
     global.deadlineMaps[filePath] = deadlineMap;
+    global.secopLinkMaps[filePath] = secopLinkMap;
 
     console.log(`✅ Fechas extraídas y almacenadas en memoria`);
-    console.log(`� Total de fechas guardadas: ${Object.keys(deadlineMap).length}`);
+    console.log(`📊 Total de fechas guardadas: ${Object.keys(deadlineMap).length}`);
+    console.log(`🔗 Total de enlaces SECOP guardados: ${Object.keys(secopLinkMap).length}`);
     console.log(`� Fechas por enlace:`, JSON.stringify(deadlineMap, null, 2));
 
     res.json({

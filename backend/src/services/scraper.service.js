@@ -68,9 +68,13 @@ class ScraperService {
         if (detalles && detalles.general && detalles.general.fecha_vencimiento) {
           const fechaVencimiento = detalles.general.fecha_vencimiento;
           const codigoProceso = detalles.general.codigo_proceso || numeroContrato;
+          const enlaceSecop = detalles.general.enlace_secop || null;  // 🔗 Enlace oficial extraído
           
           console.log(`✅ Código extraído del HTML: ${codigoProceso}`);
           console.log(`✅ Fecha extraída del HTML: ${fechaVencimiento}`);
+          if (enlaceSecop) {
+            console.log(`✅ Enlace SECOP extraído: ${enlaceSecop}`);
+          }
           
           // La fecha ya viene normalizada en formato YYYY-MM-DD HH:MM:SS
           return {
@@ -80,7 +84,8 @@ class ScraperService {
             status: 'success',
             meta: { 
               source: 'html_extraction',
-              codigo_proceso: codigoProceso
+              codigo_proceso: codigoProceso,
+              enlace_secop: enlaceSecop
             },
             // INCLUIR DATOS COMPLETOS para visualización
             datosCompletos: detalles.datosCompletos || null

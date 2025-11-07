@@ -108,7 +108,7 @@ const OdooConfig = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold mb-2">Configuración de Odoo</h1>

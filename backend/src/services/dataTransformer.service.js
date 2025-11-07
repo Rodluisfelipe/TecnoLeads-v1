@@ -34,14 +34,18 @@ class DataTransformerService {
   transformData(records, filePath = null) {
     // Obtener mapa de fechas extraídas (si existe)
     const deadlineMap = filePath && global.deadlineMaps ? global.deadlineMaps[filePath] : null;
+    const secopLinkMap = filePath && global.secopLinkMaps ? global.secopLinkMaps[filePath] : null;
     
     if (deadlineMap) {
       console.log(`\n📅 Usando fechas extraídas para ${Object.keys(deadlineMap).length} enlaces`);
     }
+    if (secopLinkMap) {
+      console.log(`🔗 Usando enlaces SECOP para ${Object.keys(secopLinkMap).length} procesos`);
+    }
 
     return records.map((record, index) => {
       try {
-        return this.transformRecord(record, index, deadlineMap);
+        return this.transformRecord(record, index, deadlineMap, secopLinkMap);
       } catch (error) {
         console.error(`Error transformando registro ${index}:`, error);
         return null;
@@ -50,7 +54,7 @@ class DataTransformerService {
   }
 
   // Transformar un registro individual para Odoo CRM
-  transformRecord(record, index, deadlineMap = null) {
+  transformRecord(record, index, deadlineMap = null, secopLinkMap = null) {
     const transformed = {
       type: 'opportunity', // Tipo de oportunidad en Odoo
     };
@@ -120,7 +124,7 @@ class DataTransformerService {
     }
 
     // Descripción completa del proceso (campo "Notas internas" en Odoo)
-    transformed.description = this.buildDescription(record);
+    transformed.description = this.buildDescription(record, secopLinkMap);
 
     // Website (enlace al proceso SECOP II)
     if (record['Enlace']) {
@@ -244,15 +248,14 @@ class DataTransformerService {
   }
   
   // Construir descripción completa del proceso (simplificada)
-  buildDescription(record) {
+  buildDescription(record, secopLinkMap = null) {
     const parts = [];
     
     // Objeto del contrato (resumido si es muy largo)
     if (record['Objeto']) {
       const objeto = record['Objeto'];
       const objetoCorto = objeto.length > 200 ? objeto.substring(0, 200) + '...' : objeto;
-      parts.push(objetoCorto);
-      parts.push('');
+      parts.push(`<p><strong>${objetoCorto}</strong></p>`);
     }
     
     // Información clave en formato compacto
@@ -262,24 +265,30 @@ class DataTransformerService {
     if (record['Ubicación']) info.push(`📍 ${record['Ubicación']}`);
     
     if (info.length > 0) {
-      parts.push(info.join(' | '));
-      parts.push('');
+      parts.push(`<p>${info.join(' | ')}</p>`);
     }
     
-    // Actividad y códigos en una línea
+    // Actividad y códigos
     if (record['Actividad Económica']) {
       const actividad = record['Actividad Económica'];
       const actividadCorta = actividad.length > 100 ? actividad.substring(0, 100) + '...' : actividad;
-      parts.push(`🏷️ ${actividadCorta}`);
+      parts.push(`<p>🏷️ ${actividadCorta}</p>`);
     }
     if (record['Códigos UNSPSC']) {
-      parts.push(`🔖 UNSPSC: ${record['Códigos UNSPSC']}`);
+      parts.push(`<p>🔖 UNSPSC: ${record['Códigos UNSPSC']}</p>`);
     }
     
-    // Enlace
+    // Enlace SECOP oficial (si existe en el mapa) o enlace del Excel
     if (record['Enlace']) {
-      parts.push('');
-      parts.push(`🔗 ${record['Enlace']}`);
+      const enlaceExcel = record['Enlace'];
+      const enlaceSecop = secopLinkMap && secopLinkMap[enlaceExcel] ? secopLinkMap[enlaceExcel] : null;
+      
+      if (enlaceSecop) {
+        parts.push(`<p>🔗 <a href="${enlaceSecop}" target="_blank" rel="noopener noreferrer">Ver proceso en SECOP II</a></p>`);
+        console.log(`📝 [Lead ${record['Número'] || 'N/A'}] Usando enlace SECOP clickeable: ${enlaceSecop}`);
+      } else {
+        parts.push(`<p>🔗 <a href="${enlaceExcel}" target="_blank" rel="noopener noreferrer">Ver detalles del proceso</a></p>`);
+      }
     }
     
     return parts.join('\n');
