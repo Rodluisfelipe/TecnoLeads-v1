@@ -17,7 +17,8 @@
     "start": "cd backend && npm install && npm start",
     "start:electron": "cd electron && npm start",
     "setup": "node setup.js",
-    "verify": "node -p \"'✅ Node.js ' + process.version + ' instalado'\""
+    "verify": "node -p \"'✅ Node.js ' + process.version + ' instalado'\"",
+    "verify:react": "node -e \"const pkg = require('./frontend/package.json'); console.log('✅ React ' + pkg.dependencies.react + ' instalado')\""
   },
   "keywords": [
     "odoo",
