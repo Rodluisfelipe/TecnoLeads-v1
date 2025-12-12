@@ -5,7 +5,7 @@
  * Verifica la versión de React instalada en el proyecto
  */
 
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -15,12 +15,6 @@ const __dirname = dirname(__filename);
 const frontendPackageJsonPath = join(__dirname, 'frontend/package.json');
 
 try {
-  // Verificar si existe el archivo frontend/package.json
-  if (!existsSync(frontendPackageJsonPath)) {
-    console.error('❌ Error: No se encontró el archivo frontend/package.json');
-    process.exit(1);
-  }
-
   // Leer el archivo package.json del frontend
   const frontendPkg = JSON.parse(readFileSync(frontendPackageJsonPath, 'utf8'));
 
@@ -47,7 +41,7 @@ try {
   process.exit(0);
 } catch (error) {
   if (error.code === 'ENOENT') {
-    console.error('❌ Error: No se pudo leer el archivo frontend/package.json');
+    console.error('❌ Error: No se encontró el archivo frontend/package.json');
   } else if (error instanceof SyntaxError) {
     console.error('❌ Error: El archivo frontend/package.json tiene errores de sintaxis JSON');
   } else {
