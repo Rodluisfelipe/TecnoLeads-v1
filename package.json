@@ -18,7 +18,7 @@
     "start:electron": "cd electron && npm start",
     "setup": "node setup.js",
     "verify": "node -p \"'✅ Node.js ' + process.version + ' instalado'\"",
-    "verify:react": "node -e \"try { const pkg = require('./frontend/package.json'); if (!pkg.dependencies || !pkg.dependencies.react) { throw new Error('React not found'); } console.log('✅ React ' + pkg.dependencies.react + ' instalado'); } catch(e) { console.error('❌ Error: No se pudo verificar la versión de React'); process.exit(1); }\""
+    "verify:react": "node verify-react.js"
   },
   "keywords": [
     "odoo",
