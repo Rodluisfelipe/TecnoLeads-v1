@@ -1,5 +1,8 @@
+import { OAuth2Client } from 'google-auth-library';
 import User from '../models/User.model.js';
 import { generateAccessToken, generateRefreshToken, verifyToken } from '../utils/jwt.util.js';
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Registro de usuario
 export const register = async (req, res) => {
@@ -65,6 +68,14 @@ export const login = async (req, res) => {
       });
     }
 
+    // Cuenta creada con Google: no tiene contraseña local
+    if (!user.password) {
+      return res.status(401).json({
+        success: false,
+        message: 'Esta cuenta usa inicio de sesión con Google. Usa el botón "Continuar con Google".',
+      });
+    }
+
     // Verificar contraseña
     const isPasswordValid = await user.comparePassword(password);
     
@@ -109,6 +120,105 @@ export const login = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error al iniciar sesión',
+      error: error.message,
+    });
+  }
+};
+
+// Login / Registro con Google
+export const googleAuth = async (req, res) => {
+  try {
+    const { credential } = req.body;
+
+    if (!credential) {
+      return res.status(400).json({
+        success: false,
+        message: 'Token de Google no proporcionado',
+      });
+    }
+
+    if (!process.env.GOOGLE_CLIENT_ID) {
+      return res.status(500).json({
+        success: false,
+        message: 'Inicio de sesión con Google no configurado en el servidor',
+      });
+    }
+
+    // Verificar el ID token directamente con Google (valida firma, audiencia y expiración)
+    let payload;
+    try {
+      const ticket = await googleClient.verifyIdToken({
+        idToken: credential,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      payload = ticket.getPayload();
+    } catch (verifyError) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token de Google inválido o expirado',
+      });
+    }
+
+    const { sub: googleId, email, name, picture, email_verified } = payload;
+
+    if (!email_verified) {
+      return res.status(401).json({
+        success: false,
+        message: 'El email de Google no está verificado',
+      });
+    }
+
+    // Buscar usuario existente por googleId o por email (para vincular cuentas locales previas)
+    let user = await User.findOne({ $or: [{ googleId }, { email }] });
+
+    if (user) {
+      // Vincular cuenta local existente con Google si aún no lo estaba
+      if (!user.googleId) {
+        user.googleId = googleId;
+        user.authProvider = 'google';
+        if (!user.avatar) user.avatar = picture;
+      }
+    } else {
+      // Crear usuario nuevo (sin password, se autentica solo por Google)
+      user = new User({
+        name: name || email.split('@')[0],
+        email,
+        googleId,
+        authProvider: 'google',
+        avatar: picture,
+      });
+    }
+
+    if (!user.isActive) {
+      return res.status(401).json({
+        success: false,
+        message: 'Usuario desactivado',
+      });
+    }
+
+    user.lastLogin = new Date();
+
+    // Generar tokens
+    const accessToken = generateAccessToken(user._id);
+    const refreshTokenValue = generateRefreshToken(user._id);
+    user.refreshToken = refreshTokenValue;
+
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'Login con Google exitoso',
+      data: {
+        user: user.toPublicJSON(),
+        accessToken,
+        refreshToken: refreshTokenValue,
+      },
+    });
+  } catch (error) {
+    console.error('Error en login con Google:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error al iniciar sesión con Google',
       error: error.message,
     });
   }

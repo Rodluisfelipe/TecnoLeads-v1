@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { Mail, Lock, User, Building, UserPlus } from 'lucide-react';
@@ -7,8 +8,21 @@ import LoadingSpinner from '../components/LoadingSpinner';
 
 const Register = () => {
   const navigate = useNavigate();
-  const { register } = useAuth();
+  const { register, loginWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setLoading(true);
+    try {
+      await loginWithGoogle(credentialResponse.credential);
+      toast.success('¡Cuenta creada exitosamente!');
+      navigate('/dashboard');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Error al registrarse con Google');
+    } finally {
+      setLoading(false);
+    }
+  };
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -176,6 +190,31 @@ const Register = () => {
               )}
             </button>
           </form>
+
+          {/* Registro con Google */}
+          {import.meta.env.VITE_GOOGLE_CLIENT_ID && (
+            <>
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300 dark:border-gray-600" />
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                    o regístrate con
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex justify-center">
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={() => toast.error('No se pudo registrar con Google')}
+                  text="signup_with"
+                  locale="es"
+                />
+              </div>
+            </>
+          )}
 
           {/* Login */}
           <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">

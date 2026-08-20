@@ -5,6 +5,7 @@ import { protect } from '../middleware/auth.middleware.js';
 import {
   register,
   login,
+  googleAuth,
   refreshToken,
   logout,
   getProfile,
@@ -33,6 +34,14 @@ router.post(
   ],
   validate,
   login
+);
+
+// Login / Registro con Google
+router.post(
+  '/google',
+  [body('credential').notEmpty().withMessage('El token de Google es requerido')],
+  validate,
+  googleAuth
 );
 
 // Refresh token

@@ -25,6 +25,18 @@ const authService = {
     return response.data;
   },
 
+  // Login / Registro con Google
+  googleLogin: async (credential) => {
+    const response = await api.post('/auth/google', { credential });
+    if (response.data.success) {
+      const { accessToken, refreshToken, user } = response.data.data;
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('user', JSON.stringify(user));
+    }
+    return response.data;
+  },
+
   // Logout
   logout: async () => {
     try {

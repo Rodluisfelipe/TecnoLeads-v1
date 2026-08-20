@@ -19,9 +19,23 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, 'La contraseña es requerida'],
+    // No se requiere si el usuario se autentica con Google
+    required: [function() { return !this.googleId; }, 'La contraseña es requerida'],
     minlength: [6, 'La contraseña debe tener al menos 6 caracteres'],
     select: false, // No incluir password en queries por defecto
+  },
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true, // Permite muchos documentos con googleId: null/ausente
+  },
+  authProvider: {
+    type: String,
+    enum: ['local', 'google'],
+    default: 'local',
+  },
+  avatar: {
+    type: String,
   },
   company: {
     type: String,
